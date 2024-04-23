@@ -19,4 +19,5 @@ from . views import *
 urlpatterns = [
     path('',Login.as_view(),name='login'),
     path('dashboard',Dashboard.as_view(),name='dashboard'),
+    path('add-product',AddProduct.as_view(),name='add-product'),
 ]

@@ -1,0 +1,608 @@
+<html>
+  <head>
+    {% load static %}
+    <link rel="stylesheet" href="/static/cs/dataTables.bootstrap5.min.css" />
+    <link href="/static/cs/fontawesome.min.css" rel="stylesheet" />
+    <link href="/static/cs/solid.css" rel="stylesheet" />
+    <link href="/static/webfonts/fa-solid-900.woff2" rel="stylesheet" />
+    <link href="/static/webfonts/fa-solid-900.ttf" rel="stylesheet" />
+    <link href="/static/webfonts/fa-solid-900.ttf" rel="stylesheet" />
+    <link href="/static/cs/dataTables.bootstrap5.min.css" rel="stylesheet" />
+    <script type="text/javascript" src="/static/js/jquery-3.7.0.js"></script>
+    <script
+      type="text/javascript"
+      src="/static/js/jquery.dataTables.min.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="/static/js/dataTables.responsive.min.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="/static/js/dataTables.bootstrap5.min.js"
+    ></script>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/bootstrap-select.min.js"></script>
+  <script src="https://cdn.ckeditor.com/4.4.7/full/ckeditor.js"></script>
+  <link href='https://fonts.googleapis.com/css?family=Dosis|Rajdhani' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+  <!-- chart js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@1.2.0"></script>
+  </head>
+  <style>
+    @import url("https://fonts.googleapis.com/css?family=Roboto:300,400,400i,500");
+
+    body {
+      overflow-x: hidden;
+      font-family: "Roboto", sans-serif;
+      font-size: 16px;
+    }
+
+    /* Toggle Styles */
+
+    #viewport {
+      padding-left: 250px;
+      -webkit-transition: all 0.5s ease;
+      -moz-transition: all 0.5s ease;
+      -o-transition: all 0.5s ease;
+      transition: all 0.5s ease;
+    }
+
+    #content {
+      width: 100%;
+      position: relative;
+      margin-right: 0;
+    }
+
+    /* Sidebar Styles */
+
+    #sidebar {
+      z-index: 1000;
+      position: fixed;
+      left: 250px;
+      width: 250px;
+      height: 100%;
+      margin-left: -250px;
+      overflow-y: auto;
+      background: #37474f;
+      -webkit-transition: all 0.5s ease;
+      -moz-transition: all 0.5s ease;
+      -o-transition: all 0.5s ease;
+      transition: all 0.5s ease;
+    }
+
+    #sidebar header {
+      background-color: #263238;
+      font-size: 20px;
+      line-height: 52px;
+      text-align: center;
+    }
+
+    #sidebar header a {
+      color: #fff;
+      display: block;
+      text-decoration: none;
+    }
+
+    #sidebar header a:hover {
+      color: #fff;
+    }
+
+    #sidebar .nav {
+    }
+
+    #sidebar .nav a {
+      background: none;
+      border-bottom: 1px solid #455a64;
+      color: #cfd8dc;
+      font-size: 14px;
+      padding: 16px 16px;
+      text-decoration: none;
+    }
+
+    #sidebar .nav a:hover {
+      background: white;
+      color: black;
+    }
+
+    #sidebar .nav a i {
+      margin-right: 16px;
+    }
+
+    .card {
+      box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+      transition: 0.3s;
+      width: 30%;
+      border-radius: 5px;
+      margin: 10px;
+    }
+
+    .card:hover {
+      box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+    }
+
+    .container {
+      {% comment %} padding: 2px 16px; {% endcomment %}
+    }
+    #drawer_btn {
+      font-size: 30px;
+      padding-top: 7px;
+    }
+    .nav li  {
+      padding-top: 10px;
+      padding-bottom:10px;
+    }
+  </style>
+  <div id="viewport">
+    <!-- Sidebar -->
+    <div id="sidebar">
+      <header>
+        <a href="#">request.session.name</a>
+      </header>
+      <ul class="nav">
+        <li>
+          <a href="/web_admin/add-product"><i class="fa-solid fa-table"></i>Add Product</a>
+        </li>
+      </ul>
+    </div>
+    <!-- Content -->
+    <div id="content">
+      <div class="card m-2 p-2" style="width: auto; display: block">
+        <div class="nav navbar-right">
+          <i class="fa fa-bars" id="drawer_btn" onclick="openCloseNav()"></i>
+          <h class="ms-auto" href="#">
+            <i class="fa fa-user ms-2 me-2"></i
+            >Hello,{{request.session.name}}</h
+          >
+        </div>
+      </div>
+      <div class="container-fluid">
+        {% for message in messages %} {% if message.tags %}
+        <script>
+          alert("{{ message }}");
+        </script>
+        {% endif %} {% endfor %}
+        {% block body %}
+        <div style="display: flex">
+          <div class="card" style="background-color: white">
+            <div class="p-1 bg-warning text-white">
+              <b>Moderator</b>
+            </div>
+            <div style="display: flex" style="background-color: yellow">
+              <div class="container border border-2">
+                <p class="text-center text-warning fw-bolder mt-2 mb-1">
+                  Total<br />{{ dic.total_employee }}
+                </p>
+              </div>
+              <div class="container border border-2">
+                <p class="text-center text-success fw-bolder mt-2 mb-1">
+                  Active
+                  <br />
+                  {{ dic.active_employee }}
+                </p>
+              </div>
+              <div class="container border border-2">
+                <p class="text-center text-danger fw-bolder mt-2 mb-1">
+                  Inactive<br />{{ dic.inactive_employee }}
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="card" style="background-color: white">
+            <div class="p-1 text-white" style="background-color: #3b8ff3">
+              <b>Users</b>
+            </div>
+            <div style="display: flex" style="background-color: yellow">
+              <div class="container border border-2">
+                <p class="text-center text-warning fw-bolder mt-2 mb-1">
+                  Total<br />{{ dic.total_user }}
+                </p>
+              </div>
+              <div class="container border border-2">
+                <p class="text-center text-success fw-bolder mt-2 mb-1">
+                  Active
+                  <br />
+                  {{ dic.active_user }}
+                </p>
+              </div>
+              <div class="container border border-2">
+                <p class="text-center text-danger fw-bolder mt-2 mb-1">
+                  Inactive<br />{{ dic.inactive_employee }}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% if data %}
+        <h5 class="mt-3 p-0">
+          Pending Reports
+          <hr class="hr p-0 mt-1 me-1" />
+        </h5>
+        <table
+        id="example"
+        class="table table-bordered text-center"
+        style="width: 100%"
+      >
+        <thead class="table-dark text-center">
+          <tr class="pt-7 pb-7"></tr>
+          <tr class="p-3 text-center">
+            <th>S.No.</th>
+            <th>Name</th>
+            <th>Branch</th>
+            <th>Designation</th>
+            <th>Department</th>
+            <th>Month</th>
+            <th>Created At</th>
+            <th>View</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for i in data %}
+          <tr>
+            <td>{{forloop.counter}}</td>
+            <td>{{i.created_by.name}}</td>
+            <td>{{i.created_by.branch}}</td>
+            <td>{{i.created_by.designation}}</td>
+            <td>{{i.created_by.department}}</td>
+            <td>{{i.month}}</td>
+            <td>{{i.created_at|date}}</td>
+            <td>
+              {% if is_user%}
+              {% if i.verified_by_admin == True and i.is_active %}
+              <a class="btn btn-success text-white"><b>Final Report verified<b></a>
+              {% elif i.verified_by_moderator  == True and i.is_active %}
+              <a class="btn btn-success text-white"><b>Pending for Admin<b></a>
+              {% elif i.submited_by_user == False %}
+              <a class="btn btn-info text-white" href="view_report/{{i.id}}"><b>Edit<b></a>
+              {% else %}
+              <a class="btn btn-info text-white" href="view_report/{{i.id}}"><b>View<b></a>
+              {% endif %}
+              {% elif is_user == False and i.is_active == True %}
+              <a class="btn btn-info text-white" href="view_report/{{i.id}}"><b>View<b></a>
+              {% endif %}
+            </td>
+            <td>
+            {% if is_user == False %}
+            <a class="btn btn-success m-1 text-white" href="accept_reject/{{i.id}}/1"><b>Accept<b></a>
+            <a class="btn btn-danger m-1 text-white" href="accept_reject/{{i.id}}/0"><b>Reject<b></a>
+            {% else %}
+            <a class="btn btn-info text-white" href="view_report/{{i.id}}"><b>View<b></a>
+            {% endif %}
+            </td> 
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+        {% endif %}
+      </div>
+      {% endblock body %}
+    </div>
+  </div>
+  <script type="text/javascript">
+    function openCloseNav() {
+      console.log(document.getElementById("sidebar").style.width);
+      if (document.getElementById("sidebar").style.width == "0px") {
+        document.getElementById("sidebar").style.width = "250px";
+        document.getElementById("viewport").style.paddingLeft = "250px";
+      } else {
+        document.getElementById("sidebar").style.width = "0px";
+        document.getElementById("viewport").style.paddingLeft = "0px";
+      }
+    }
+
+    CKEDITOR.inline(".editor");
+
+    function cloneDiv(wrapperId) {
+      // Clone the wrapper
+      var originalWrapper = document.getElementById(wrapperId);
+      var clonedWrapper = originalWrapper.cloneNode(true);
+
+      // Append the cloned wrapper after the original wrapper
+      originalWrapper.parentNode.insertBefore(
+        clonedWrapper,
+        originalWrapper.nextSibling
+      );
+    }
+    const ctx = document.getElementById("myChart").getContext("2d");
+    let myChart;
+
+    const dataPoints = [
+      {
+        label: "Brand7",
+        y: 2,
+      },
+      {
+        label: "Brand6",
+        y: 9,
+      },
+      {
+        label: "Brand5",
+        y: 12,
+      },
+      {
+        label: "Brand4",
+        y: 16,
+      },
+      {
+        label: "Brand3",
+        y: 18,
+      },
+      {
+        label: "Brand2",
+        y: 21,
+      },
+      {
+        label: "Brand1",
+        y: 24,
+      },
+    ];
+
+    const chartData = {
+      labels: dataPoints.map((point) => point.label),
+      datasets: [
+        {
+          label: "Data Points",
+          data: dataPoints.map((point) => point.y),
+          backgroundColor: "rgba(54, 162, 235, 0.2)",
+          borderColor: "rgba(54, 162, 235, 1)",
+          borderWidth: 1,
+        },
+      ],
+    };
+
+    myChart = new Chart(ctx, {
+      type: "bar",
+      data: chartData,
+      options: {
+        indexAxis: "y",
+        scales: {
+          x: {
+            beginAtZero: true,
+          },
+        },
+      },
+    });
+
+    const handleClick = (evt) => {
+      const activePoint = myChart.getElementsAtEventForMode(
+        evt,
+        "nearest",
+        { intersect: true },
+        true
+      )[0];
+      if (activePoint) {
+        const index = activePoint.index;
+        const newValue = prompt("Enter new value:", dataPoints[index].y);
+        if (newValue !== null) {
+          dataPoints[index].y = parseInt(newValue, 10);
+          myChart.data.datasets[0].data[index] = parseInt(newValue, 10);
+          myChart.update();
+        }
+      }
+    };
+
+    myChart.options.onClick = handleClick;
+
+    const ctx2 = document.getElementById("myChart2").getContext("2d");
+    let myChart2;
+
+    const primaryData = [
+      {
+        label: "FY 22-23",
+        y: 20,
+      },
+      {
+        label: "YTD 22-23",
+        y: 30,
+      },
+      {
+        label: "OB/RF",
+        y: 40,
+      },
+      {
+        label: "Prev QTR",
+        y: 40,
+      },
+      {
+        label: "Sales Plan",
+        y: 50,
+      },
+      {
+        label: "Achievement",
+        y: 50,
+      },
+      {
+        label: "YTD 23-24",
+        y: 50,
+      },
+    ];
+
+    const secondaryData = [
+      {
+        label: "FY 22-23",
+        y: 22,
+      },
+      {
+        label: "YTD 22-23",
+        y: 35,
+      },
+      {
+        label: "OB/RF",
+        y: 45,
+      },
+      {
+        label: "Prev QTR",
+        y: 47,
+      },
+      {
+        label: "Sales Plan",
+        y: 60,
+      },
+      {
+        label: "Achievement",
+        y: 60,
+      },
+      {
+        label: "YTD 23-24",
+        y: 60,
+      },
+    ];
+
+    const chartData2 = {
+      labels: primaryData.map((point) => point.label),
+      datasets: [
+        {
+          label: "Primary Data",
+          data: primaryData.map((point) => point.y),
+          backgroundColor: "rgba(255, 99, 132, 0.2)",
+          borderColor: "rgba(255, 99, 132, 1)",
+          borderWidth: 1,
+          yAxisID: "primary-y-axis",
+        },
+        {
+          label: "Secondary Data",
+          data: secondaryData.map((point) => point.y),
+          backgroundColor: "rgba(75, 192, 192, 0.2)",
+          borderColor: "rgba(75, 192, 192, 1)",
+          borderWidth: 1,
+          yAxisID: "secondary-y-axis",
+        },
+      ],
+    };
+
+    myChart2 = new Chart(ctx2, {
+      type: "bar",
+      data: chartData2,
+      options: {
+        scales: {
+          y: {
+            type: "linear",
+            display: true,
+            position: "left",
+            id: "primary-y-axis",
+            beginAtZero: true,
+            grid: {
+              color: "rgba(255, 99, 132, 0.2)",
+            },
+          },
+          y1: {
+            type: "linear",
+            display: true,
+            position: "right",
+            id: "secondary-y-axis",
+            beginAtZero: true,
+            grid: {
+              color: "rgba(75, 192, 192, 0.2)",
+            },
+          },
+        },
+      },
+    });
+
+    const handleClick2 = (evt) => {
+      const activePoint = myChart2.getElementsAtEventForMode(
+        evt,
+        "nearest",
+        { intersect: true },
+        true
+      )[0];
+      if (activePoint) {
+        const index = activePoint.index;
+        const datasetIndex = activePoint.datasetIndex;
+        const newValue = prompt(
+          "Enter new value:",
+          datasetIndex === 0 ? primaryData[index].y : secondaryData[index].y
+        );
+        if (newValue !== null) {
+          if (datasetIndex === 0) {
+            primaryData[index].y = parseInt(newValue, 10);
+            myChart2.data.datasets[0].data[index] = parseInt(newValue, 10);
+          } else {
+            secondaryData[index].y = parseInt(newValue, 10);
+            myChart2.data.datasets[1].data[index] = parseInt(newValue, 10);
+          }
+          myChart2.update();
+        }
+      }
+    };
+
+    myChart2.options.onClick = handleClick2;
+
+    // Third Chart
+    const ctx3 = document.getElementById("myChart3").getContext("2d");
+    let myChart3;
+
+    const dataPoints3 = [
+      {
+        y: 25,
+      },
+      {
+        y: 26,
+      },
+      {
+        y: 20,
+      },
+      {
+        y: 30,
+      },
+    ];
+
+    const chartData3 = {
+      labels: dataPoints3.map((point, index) => `WEEK ${index + 1}`),
+      datasets: [
+        {
+          label: "Data Points",
+          data: dataPoints3.map((point) => point.y),
+          backgroundColor: "rgba(255, 206, 86, 0.2)",
+          borderColor: "rgba(255, 206, 86, 1)",
+          borderWidth: 1,
+        },
+      ],
+    };
+
+    myChart3 = new Chart(ctx3, {
+      type: "bar",
+      data: chartData3,
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true,
+          },
+        },
+      },
+    });
+
+    const handleClick3 = (evt) => {
+      const activePoint = myChart3.getElementsAtEventForMode(
+        evt,
+        "nearest",
+        { intersect: true },
+        true
+      )[0];
+      if (activePoint) {
+        const index = activePoint.index;
+        const newValue = prompt("Enter new value:", dataPoints3[index].y);
+        if (newValue !== null) {
+          dataPoints3[index].y = parseInt(newValue, 10);
+          myChart3.data.datasets[0].data[index] = parseInt(newValue, 10);
+          myChart3.update();
+        }
+      }
+    };
+
+    myChart3.options.onClick = handleClick3;
+  </script>
+</html>

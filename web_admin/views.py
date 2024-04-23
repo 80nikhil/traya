@@ -1,5 +1,7 @@
 from django.shortcuts import render,redirect
 from django.views.generic.base import TemplateView
+from rest_framework.views import APIView
+from . serializers import * 
 from . models import *
 
 class Login(TemplateView):
@@ -21,4 +23,18 @@ class Dashboard(TemplateView):
     template_name = 'dashboard.html'
     
     def get(self,request,*args, **kwargs):
-        return render(request,self.template_name) 
+        return render(request,self.template_name)
+    
+class AddProduct(APIView):
+    template_name = 'add_product.html'
+    
+    def get(self,request,*args, **kwargs):
+        return render(request,self.template_name)
+    
+    def post(self,request,*args, **kwargs):
+        serializer = product_serializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+        else:
+            print(serializer.errors)    
+        return redirect('/web_admin/add-product') 

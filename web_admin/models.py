@@ -15,3 +15,12 @@ class user(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
+class product(models.Model):
+    name = models.CharField(max_length=150)    
+    description = models.TextField()
+    amount = models.IntegerField(default=0)
+    image = models.ImageField(upload_to='product_image/')
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True) 
+    
