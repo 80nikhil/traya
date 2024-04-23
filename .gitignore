@@ -1,0 +1,17 @@
+Backup
+Migration
+media
+logs
+web_admin/__pycache__/
+Migration/__pycache__/
+traya_clone/__pycache__/
+*.pyc
+web_admin/migrations/
+Migration/migrations/
+traya_clone/migrations/
+__pycache__
+**/__pycache__
+**/migrations
+=======
+**/.DS_Store
+db.sqlite3
