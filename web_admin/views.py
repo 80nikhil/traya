@@ -9,9 +9,10 @@ class Login(TemplateView):
     model_name = user
     
     def get(self,request,*args, **kwargs):
-        if request.session['user_id']:
+        try:
+            request.session['user_id']
             return redirect('/web_admin/dashboard') 
-        else:
+        except KeyError as e:
            return render(request,self.template_name)    
     
     def post(self,request,*args, **kwargs):
@@ -91,7 +92,24 @@ class EditQuestion(APIView):
         context={'list':list,'question':list[0].question}
         return render(request,self.template_name,context) 
     
-    def post(self,request,*args, **kwargs):
-        list = self.model.objects.filter()
-        context={'list':list}
-        return render(request,self.template_name,context)       
+    def post(self,request,id,*args, **kwargs):
+        my_dict = request.data
+        for key,value in my_dict.items():
+            try:
+                int(key)
+                choice_obj = self.model.objects.get(id=id)
+                choice_obj.choice = value
+                choice_obj.save()
+            except:
+                pass 
+        question_obj = questions.objects.get(id=id)
+        question_obj.question = request.POST.get('question') 
+        question_obj.save()
+        return redirect('/web_admin/add-questions')    
+    
+    def delete(self,request,id,*args, **kwargs):
+        related_objects = self.model.objects.filter(question__id=id)
+        related_objects.delete()
+        question = questions.objects.get(id=id)
+        question.delete()
+        return redirect('/web_admin/add-questions')

@@ -77,7 +77,7 @@
         {% for obj in list %}
         <tr>
           <td>{{forloop.counter}}</td>
-          <td>{{obj.name}}</td>
+          <td>{{obj.question}}</td>
           <td>{{obj.created_at|date}}</td>
           <td>{{obj.updated_at|date}}</td>
           <td><a class="btn btn-warning text-white" href="/web_admin/edit-question/{{obj.id}}">Edit Choice</a></td>

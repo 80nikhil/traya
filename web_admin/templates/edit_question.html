@@ -12,7 +12,7 @@
       <hr class="hr p-0 mt-1 me-1" />
     </h4>
     <form
-      action="/web_admin/add-questions"
+      action="/web_admin/edit-question/{{question.id}}"
       method="post"
       enctype="multipart/form-data"
     >
@@ -36,9 +36,11 @@
         <button type="submit" class="btn btn-primary pe-4 ps-4 m-2">
           Update
         </button>
+        <form action="/web_admin/edit-question/{{question.id}}" method="delete">
         <button type="submit" class="btn btn-danger pe-4 ps-4 m-2">
             Delete
         </button>
+        </form>
       </div>
     </form>
 </div>
