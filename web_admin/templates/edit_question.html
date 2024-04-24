@@ -1,0 +1,45 @@
+{% extends "web_adminbase.html" %} {% block body %}{% load static %}
+<script type="text/javascript" src="{% static 'js/custom_table.js' %}"></script>
+<style
+  rel="stylesheet"
+  type="text/css"
+  src="{% static 'cs/table.css' %}"
+></style>
+<div class="m-4">
+  <div class="card me-6 p-2" style="width: auto">
+    <h4 class="m-0 p-0">
+      Add Question
+      <hr class="hr p-0 mt-1 me-1" />
+    </h4>
+    <form
+      action="/web_admin/add-questions"
+      method="post"
+      enctype="multipart/form-data"
+    >
+      {% csrf_token %}
+      <marquee class="text-warning m-2 font-weight-bold"> Add choice in sequence of decrement in which efficiency of anything is on top</marquee>
+      <div class="form-group row mt-2">
+        <label for="" class="col-sm-2 form-control-label">Question </label>
+        <div class="col-sm-10">
+          <input type="text" name="question" id="alias-textbox" class="form-control" value="{{question.question}}"/>
+        </div>
+      </div>
+      {% for obj in list%}
+      <div class="form-group row mt-3">
+        <label for="" class="col-sm-2 form-control-label"> Choices {{forloop.counter}} : </label>
+        <div class="col-sm-10">
+          <input type="text" name="{{obj.id}}" id="alias-textbox" class="form-control" value="{{obj.choice}}" />
+        </div>
+      </div>
+      {% endfor %}
+      <div class="d-flex justify-content-center mt-2">
+        <button type="submit" class="btn btn-primary pe-4 ps-4 m-2">
+          Update
+        </button>
+        <button type="submit" class="btn btn-danger pe-4 ps-4 m-2">
+            Delete
+        </button>
+      </div>
+    </form>
+</div>
+{% endblock %}

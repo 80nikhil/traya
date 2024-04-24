@@ -20,4 +20,8 @@ urlpatterns = [
     path('',Login.as_view(),name='login'),
     path('dashboard',Dashboard.as_view(),name='dashboard'),
     path('add-product',AddProduct.as_view(),name='add-product'),
+    path('all-users',AllUsers.as_view(),name='all-users'),
+    path('add-questions',AddQuestions.as_view(),name='add-questions'),
+    path('edit-question/<int:id>',EditQuestion.as_view(),name='edit-questions'),
+    path('edit-question',EditQuestion.as_view(),name='edit-questions'),
 ]

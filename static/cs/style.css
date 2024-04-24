@@ -1,0 +1,36 @@
+canvas{
+  border :2px solid #000;
+}
+.canvas-container{
+  margin: 20px auto;
+}
+.canvas-wrapper{
+  position:relative;
+  width:320px;
+}
+.remove-canvas{
+  position: absolute;
+  right:-320px;
+  top:0;
+  width:30px;
+  height:30px;
+  background: #eee;
+  border:none;
+  text-align:center;
+}
+.clone-canvas{
+  position: absolute;
+  right:-320px;
+  top:40px;
+  width:30px;
+  height:30px;
+  background: #eee;
+  border:none;
+  text-align:center;
+}
+.add-canvas{
+  background:#8c94fd;
+  border:none;
+  padding:10px;
+  width:600px;
+}

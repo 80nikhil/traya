@@ -1,0 +1,43 @@
+{% extends "web_adminbase.html" %} {% block body %}{% load static %}
+<script type="text/javascript" src="{% static 'js/custom_table.js' %}"></script>
+<style
+  rel="stylesheet"
+  type="text/css"
+  src="{% static 'cs/table.css' %}"
+></style>
+<div class="m-4">
+  <div class="card me-6 p-2" style="width: auto">
+    <h4 class="mt-4 p-0">
+      All Product List
+      <hr class="hr p-0 mt-1 me-1" />
+    </h4>
+    <table
+      id="example"
+      class="table table-bordered text-center"
+      style="width: 100%"
+    >
+      <thead class="table-dark text-center">
+        <tr class="pt-7 pb-7"></tr>
+        <tr class="p-3 text-center">
+          <th>S.No.</th>
+          <th>Name</th>
+          <th>Contact No</th>
+          <th>View Report</th>
+          <th>Created At</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for obj in list %}
+        <tr>
+          <td>{{forloop.counter}}</td>
+          <td>{{obj.name}}</td>
+          <td>{{obj.contact_no}}</td>
+          <td><a class="btn btn-warning text-white">View Report</a></td>
+          <td>{{obj.created_at|date}}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

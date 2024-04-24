@@ -2,6 +2,7 @@ Backup
 Migration
 media
 logs
+static/
 web_admin/__pycache__/
 Migration/__pycache__/
 traya_clone/__pycache__/
