@@ -8,61 +8,36 @@
 <div class="m-4">
   <div class="card me-6 p-2" style="width: auto">
     <h4 class="m-0 p-0">
-      Add Product
+      Add Package
       <hr class="hr p-0 mt-1 me-1" />
     </h4>
     <form
-      action="/web_admin/add-product"
+      action="/web_admin/add-package"
       method="post"
-      enctype="multipart/form-data"
-    >
+      enctype="multipart/form-data">
       {% csrf_token %}
       <div class="form-group row mt-2">
-        <label for="" class="col-sm-2 form-control-label">Product Name</label>
+        <label for="" class="col-sm-2 form-control-label">Package Name : </label>
         <div class="col-sm-10">
-          <input
-            type="text"
-            name="name"
-            id="alias-textbox"
-            class="form-control"
-            required
-          />
+          <input type="text" name="name" id="alias-textbox" class="form-control" placeholder="Enter Package Name" />
         </div>
       </div>
       <div class="form-group row mt-3">
-        <label for="" class="col-sm-2 form-control-label">Description</label>
+        <label for="" class="col-sm-2 form-control-label">Description : </label>
         <div class="col-sm-10">
-          <input
-            type="text"
-            name="description"
-            id="alias-textbox"
-            class="form-control"
-            required
-          />
+          <input type="text" name="description" id="alias-textbox" class="form-control" placeholder="Enter Description" />
         </div>
       </div>
       <div class="form-group row mt-3">
-        <label for="" class="col-sm-2 form-control-label">Amount</label>
+        <label for="" class="col-sm-2 form-control-label"> Duration (In Days) </label>
         <div class="col-sm-10">
-          <input
-            type="number"
-            name="amount"
-            id="alias-textbox"
-            class="form-control"
-            required
-          />
+          <input type="number" name="Duration" id="alias-textbox" class="form-control" placeholder="Enter Duration (In Days)"/>
         </div>
       </div>
       <div class="form-group row mt-3">
-        <label for="" class="col-sm-2 form-control-label">Image %</label>
+        <label for="" class="col-sm-2 form-control-label"> Price </label>
         <div class="col-sm-10">
-          <input
-            type="file"
-            name="image"
-            accept="image/*"
-            class="form-control"
-            required
-          />
+          <input type="number" name="price" id="alias-textbox" class="form-control" placeholder="Enter Package"/>
         </div>
       </div>
       <div class="form-group row mt-3">
@@ -95,12 +70,12 @@
       </div>
       <div class="d-flex justify-content-center mt-2">
         <button type="submit" class="btn btn-primary pe-4 ps-4 m-2">
-          Add Product
+          Add Package
         </button>
       </div>
     </form>
     <h4 class="mt-4 p-0">
-      All Product List
+      All Package List
       <hr class="hr p-0 mt-1 me-1" />
     </h4>
     <table
@@ -112,11 +87,13 @@
         <tr class="pt-7 pb-7"></tr>
         <tr class="p-3 text-center">
           <th>S.No.</th>
-          <th>Product Name</th>
-          <th>Product Description</th>
-          <th>Min</th>
-          <th>Max</th>
-          <th>Product Image</th>
+          <th>Package Name</th>
+          <th>Description</th>
+          <th>Price</th>
+          <th>Min%</th>
+          <th>Max%</th>
+          <th>Created at</th>
+          <th>Action</th>
         </tr>
       </thead>
       <tbody>
@@ -125,13 +102,11 @@
           <td>{{forloop.counter}}</td>
           <td>{{obj.name}}</td>
           <td>{{obj.description}}</td>
+          <td>{{obj.price}}</td>
           <td>{{obj.min}}</td>
           <td>{{obj.max}}</td>
-          <td>
-            <a class="btn btn-warning text-white" href="{{obj.image.url}}"
-              >View Image</a
-            >
-          </td>
+          <td>{{obj.created_at|date}}</td>
+          <td><a class="btn btn-danger text-white" href="/web_admin/delete-package/{{obj.id}}">Delete</a></td>
         </tr>
         {% endfor %}
       </tbody>

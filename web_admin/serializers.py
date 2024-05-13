@@ -9,4 +9,9 @@ class product_serializer(serializers.ModelSerializer):
 class question_serializer(serializers.ModelSerializer):
     class Meta:
         model = questions
-        fields = '__all__'                
+        fields = '__all__' 
+
+class package_serializer(serializers.ModelSerializer):
+    class Meta:
+        model = package
+        fields = '__all__'                        

@@ -1,0 +1,164 @@
+{% extends "user_base.html" %} {% block body %}{% load static %}
+<script type="text/javascript" src="{% static 'js/custom_table.js' %}"></script>
+<style>
+  .products {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 20px;
+  }
+
+  .product {
+    width: 300px;
+    margin: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    text-align: center;
+  }
+
+  .product img {
+    width: auto;
+    height: 250px;
+    margin-bottom: 10px;
+  }
+
+  @media screen and (max-width: 768px) {
+    .product {
+      width: 100%;
+    }
+  }
+</style>
+<div class="m-4">
+  <div class="card me-6 p-2" style="width: auto">
+    {% if list %}
+    <div class="card-body">
+      <h5 class="card-title">{{list.question}}</h5>
+      <form action="/user/dashboard" method="post">
+        {% csrf_token %} {% for choice in choices %}
+        <div class="mt-4">
+          <input
+            class="form-check-input"
+            type="radio"
+            name="choice"
+            id="choice1"
+            value="{{choice.id}}"
+          />
+          <label class="form-check-label ms-3">{{choice.choice}}</label>
+        </div>
+        {% endfor %}
+        <button
+          type="submit"
+          name="question"
+          value="{{list.id}}"
+          class="btn btn-primary mt-4"
+        >
+          Next ->
+        </button>
+      </form>
+    </div>
+    {% else %} {% if scalp_image %}
+    <h5 class="text-warning font-weight-bold">Your Report</h5>
+    {% for obj in answer_list %}
+    <p>
+      {{obj.question.question}} -
+      <span class="text-success font-weight-bold">{{obj.answer.choice}}</span>
+    </p>
+    {% endfor %}
+    <p class="mt-2">
+      Your hair health is :
+      <span class="text-success font-weight-bold">{{user.hair_health}}</span>
+    </p>
+    <h5 class="mt-5">Recommended Packages List</h5>
+    <div class="scroll-container d-flex justify-content-center">
+      {%for package in package_list%}
+      <div class="card mb-3" style="max-width: 35rem;">
+        <div class="row g-0">
+          <div class="col-md-4">
+            <img src="https://logos-world.net/wp-content/uploads/2020/10/Free-Logo.png" class="img-fluid rounded-start" alt="...">
+          </div>
+          <div class="col-md-8">
+            <div class="card-body">
+            <h3 class="card-title">{{ package.name }}</h3>
+            <p class="card-text">{{ package.description }}</p>
+            <p class="card-text">{{ package.price }}</p>
+              <form action="/user/add-to-cart" method="post">
+                {% csrf_token %}
+                <button class="btn btn-success m-1 text-white w-100">Buy Now</button>
+              </form>
+          </div>
+        </div>
+      </div>
+    </div>
+      {% endfor %}
+    </div>
+
+    <div class="container">
+      <h5 class="mt-2 p-0">Recommended Products List</h5>
+      <div class="text-end mt-2 p-0">
+          <a href="#">View All</a>
+      </div>
+  </div>
+    <div class="scroll-container d-flex flex-nowrap overflow-auto">
+      {% for product in product_list %}
+        <div class="card product">
+          <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}" />
+          <h2>{{ product.name }}</h2>
+          <p>Price: {{ product.amount }}</p>
+          <p style="height:20px;">
+            {{ product.description|safe|truncatechars:50 }}
+            {% if product.description|length > 50 %}
+              <span class="more-text" style="display:none;">{{ product.description }}</span>
+              <a href="#" class="link">see more</a>
+            {% endif %}
+          </p>
+          <div class="d-flex justify-content-center">
+            <button class="btn btn-success m-3 text-white p-2">Buy Now</button>
+            <form action="/user/add-to-cart" method="post">
+              {% csrf_token %}
+              <button
+                class=" btn btn-warning m-3 text-white p-2"
+                type="submit"
+                name="product"
+                value="{{product.id}}"
+              >
+                Add to cart
+              </button>
+            </form>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+     {% else %}
+    <form
+      action="/user/add-scalp-image"
+      method="post"
+      enctype="multipart/form-data"
+    >
+      {% csrf_token %}
+      <div class="form-group col">
+        <label for="" class="col-sm-2 form-control-label">Scale Image </label>
+        <div class="form-group row mt-3">
+          <div class="col-sm-10">
+            <input
+              type="file"
+              name="image"
+              accept="image/*"
+              class="form-control"
+              required
+            />
+          </div>
+        </div>
+        <button type="submit" class="btn btn-success mt-3">Submit</button>
+      </div>
+    </form>
+    {% endif %} {% endif %}
+  </div>
+</div>
+<div class="container">
+  <footer class="bg-light text-center text-lg-start">
+      <div class="text-center p-3">
+          &copy; 2024 Your Company. All rights reserved.
+      </div>
+  </footer>
+</div>
+{%endblock body %}

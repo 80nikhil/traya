@@ -10,7 +10,17 @@ Answer_Type = [
         ('3','3'),
         ('4','4'),
  ]
+Gender= [
+    ('MALE','Male'),
+    ('FEMALE','Female')
+]
 
+class category(models.Model):
+    name =models.CharField(max_length=50)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
 class user(models.Model):
     name = models.CharField(max_length=50)
     contact_no = models.CharField(max_length=15)
@@ -18,9 +28,11 @@ class user(models.Model):
     role = models.CharField(max_length=15, choices=Role)
     password = models.CharField(max_length=20,null=True,blank=True)
     is_active = models.BooleanField(default=True)
-    scalp_image = models.ImageField(upload_to='scalp_image/')
+    gender = models.CharField(max_length=15, choices=Gender)
+    scalp_image = models.ImageField(upload_to='scalp_image/',null=True,blank=True)
     is_question_submitted = models.BooleanField(default=False)
-    hair_health = models.IntegerField(default=0)
+    hair_health = models.FloatField(default=0)
+    category = models.ForeignKey(category,on_delete=models.CASCADE,null=True,blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
@@ -28,6 +40,8 @@ class product(models.Model):
     name = models.CharField(max_length=150)    
     description = models.TextField()
     amount = models.IntegerField(default=0)
+    min = models.IntegerField(default=0)
+    max = models.IntegerField(default=0)
     image = models.ImageField(upload_to='product_image/')
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -53,3 +67,13 @@ class user_questinare(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)      
     
+class package(models.Model):
+    name = models.CharField(max_length=150) 
+    description = models.TextField()
+    duration = models.IntegerField(default=0)
+    price = models.FloatField(default=0.0)
+    is_active = models.BooleanField()
+    min = models.IntegerField(default=0)
+    max = models.IntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)          

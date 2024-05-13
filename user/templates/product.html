@@ -1,0 +1,68 @@
+{% extends "user_base.html" %} {% block body %}{% load static %}
+<script type="text/javascript" src="{% static 'js/custom_table.js' %}"></script>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  h1 {
+    text-align: center;
+    margin-top: 20px;
+  }
+
+  .products {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 20px;
+  }
+
+  .product {
+    width: 300px;
+    margin: 10px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    text-align: center;
+  }
+
+  .product img {
+    width: auto;
+    height: 250px;
+    margin-bottom: 10px;
+  }
+
+  @media screen and (max-width: 768px) {
+    .product {
+      width: 100%;
+    }
+  }
+</style>
+<div class="products">
+  {% for product in list %}
+  <div class="product">
+    <img src="{{ product.image.url }}" class="img-thumbnail rounded" alt="{{ product.name }}" />
+    <h2>{{ product.name }}</h2>
+    <p>Price: {{ product.amount }}</p>
+    <p>{{ product.description|safe|truncatechars:50 }}..<a class="link">see more</a></p>
+    <div class="d-flex">
+      <button class="btn-success m-3 text-white p-2">Buy Now</button>
+      <form action="/user/add-to-cart" method="post">
+        {% csrf_token %}
+        <button
+          class="btn-warning m-3 text-white p-2"
+          type="submit"
+          name="product"
+          value="{{product.id}}"
+        >
+          Add to cart
+        </button>
+      </form>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{%endblock body %}
