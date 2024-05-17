@@ -140,7 +140,10 @@ class DeletePackage(APIView):
     def get(self,request,id,*args, **kwargs):
         package_objects = self.model.objects.filter(id=id)
         package_objects.delete()
-        return redirect('/web_admin/add-package')    
+        return redirect('/web_admin/add-package')  
+    
+class AddCategory(APIView): 
+    model = category 
 
 class Logout(APIView):
     def get(self,request,*args, **kwargs):
