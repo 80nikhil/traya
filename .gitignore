@@ -14,7 +14,7 @@ user/__pycache__/
 # user/migrations/
 __pycache__
 **/__pycache__
-**/migrations
+# **/migrations
 =======
 **/.DS_Store
-db.sqlite3
+# db.sqlite3
