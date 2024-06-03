@@ -1,10 +1,46 @@
 from django.shortcuts import render,redirect
-from django.views.generic.base import TemplateView
+from django.views.generic.base import TemplateView,View
 from rest_framework.views import APIView
+from django.contrib import messages
 from . serializers import * 
 from  web_admin.models import *
 from . models import * 
+from web_admin.models import *
 
+def get_cart_count(request):
+    user_id=request.session['user_id']
+    user_obj = user.objects.get(id=user_id)
+    return cart.objects.filter(user=user_obj).count()
+
+class Register(View):
+    template_name = 'register_user.html'
+    serializer = register_serializer
+    model_name = user
+    
+    def get(self,request,*args, **kwargs):
+        try:
+            request.session['user_id']
+            return redirect('/user/dashboard') 
+        except KeyError as e:
+           category_list = category.objects.all()
+           context = {'category_list':category_list,'cart_count':get_cart_count(request)}
+           return render(request,self.template_name,context)  
+    
+    def post(self,request,*args, **kwargs):
+        try:
+            self.model_name.objects.get(contact_no=request.POST.get('contact_no'))
+            messages.error(request,'User already exist with contact no')
+            return redirect('/user/register')
+        except user.DoesNotExist:    
+            serializer = self.serializer(data=request.POST)
+            if serializer.is_valid():
+                serializer.save()
+                messages.success(request,'Register Succesfully')
+                return redirect('/user/')
+            else:
+                messages.error(request,'Registration Failed')
+                return redirect('/user/register')   
+       
 class Login(TemplateView):
     template_name = 'login_user.html'
     model_name = user
@@ -54,9 +90,9 @@ class Dashboard(TemplateView):
                 context = {'scalp_image':False}
             else:    
                 submitted_question=user_questinare.objects.filter(user__id=user_id).values_list('question__id',flat=True)
-                question_list = self.model_name.objects.exclude(id__in=submitted_question).first()
+                question_list = self.model_name.objects.filter(category=user_obj.category).exclude(id__in=submitted_question).first()
                 choice_list = choice.objects.filter(question=question_list)
-                context = {'list':question_list,'choices':choice_list}
+                context = {'list':question_list,'choices':choice_list,'cart_count':get_cart_count(request)}
             return render(request,self.template_name,context)
         except KeyError as e:
            return redirect('/user/')  
@@ -87,7 +123,7 @@ class Product(TemplateView):
     
     def get(self,request,*args, **kwargs):
         product_list = self.model_name.objects.all()
-        context = {'list':product_list}
+        context = {'list':product_list,'cart_count':get_cart_count(request)}
         return render(request,self.template_name,context) 
     
 class Add_to_Cart(TemplateView):
@@ -98,7 +134,7 @@ class Add_to_Cart(TemplateView):
         try:
             user_id=request.session['user_id']
             product_list = self.model_name.objects.filter(user__id=user_id)
-            context = {'list':product_list}
+            context = {'list':product_list,'cart_count':get_cart_count(request)}
             return render(request,self.template_name,context) 
         
         except KeyError as e:

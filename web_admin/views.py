@@ -37,7 +37,8 @@ class AddProduct(APIView):
     
     def get(self,request,*args, **kwargs):
         list = self.model.objects.all()
-        context={'list':list}
+        category_list = category.objects.all()
+        context={'list':list,'category_list':category_list}
         return render(request,self.template_name,context)
     
     def post(self,request,*args, **kwargs):
@@ -63,7 +64,8 @@ class AddQuestions(APIView):
     
     def get(self,request,*args, **kwargs):
         list = self.model.objects.all()
-        context={'list':list}
+        category_list = category.objects.all()
+        context={'list':list,'category_list':category_list}
         return render(request,self.template_name,context)    
     
     def post(self,request,*args, **kwargs):
@@ -134,16 +136,54 @@ class AddPackage(APIView):
             pass
         return redirect('/web_admin/add-package')    
     
+class AddCategory(APIView):
+    model = category
+    template_name = "add_category.html" 
+    
+    def get(self,request,*args, **kwargs):
+        list = self.model.objects.all()
+        context={'list':list}
+        return render(request,self.template_name,context)
+    
+    def post(self,request,*args, **kwargs):
+        serializer = category_serializer(data=request.data)
+        if serializer.is_valid(): 
+            serializer.save()
+        else:
+            pass
+        return redirect('/web_admin/add-category')  
+    
+class AddDietPlan(APIView):
+    model = diet_plan
+    template_name = "add_diet_plan.html" 
+    
+    def get(self,request,*args, **kwargs):
+        list = self.model.objects.all()
+        category_list = category.objects.all()
+        context={'list':list,'category_list':category_list}
+        return render(request,self.template_name,context)
+    
+    def post(self,request,*args, **kwargs):
+        serializer = diet_plan_serializer(data=request.data)
+        if serializer.is_valid(): 
+            serializer.save()
+        else:
+            pass
+        return redirect('/web_admin/add-diet-plan')  
+    
 class DeletePackage(APIView):
     model = package 
-        
     def get(self,request,id,*args, **kwargs):
         package_objects = self.model.objects.filter(id=id)
         package_objects.delete()
         return redirect('/web_admin/add-package')  
     
-class AddCategory(APIView): 
+class DeleteCategory(APIView):
     model = category 
+    def get(self,request,id,*args, **kwargs):
+        package_objects = self.model.objects.filter(id=id)
+        package_objects.delete()
+        return redirect('/web_admin/add-category')      
 
 class Logout(APIView):
     def get(self,request,*args, **kwargs):

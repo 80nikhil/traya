@@ -28,6 +28,8 @@ urlpatterns = [
     path('add-package',AddPackage.as_view(),name='add-package'),
     path('delete-package/<int:id>',DeletePackage.as_view(),name='delete-package'),
     path('delete-question/<int:id>',DeleteQuestion.as_view(),name='delete-questions'),
-    # path('add-category',AddCategory.as_view(),name='add-category'),
+    path('delete-category/<int:id>',DeleteCategory.as_view(),name='delete-category'),
+    path('add-category',AddCategory.as_view(),name='add-category'),
+    path('add-diet-plan',AddDietPlan.as_view(),name='add-diet-plan'),
     path('logout',Logout.as_view(),name='logout'),
 ]

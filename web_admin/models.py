@@ -25,6 +25,7 @@ class user(models.Model):
     name = models.CharField(max_length=50)
     contact_no = models.CharField(max_length=15)
     otp = models.CharField(max_length=6)
+    email = models.CharField(max_length=30)
     role = models.CharField(max_length=15, choices=Role)
     password = models.CharField(max_length=20,null=True,blank=True)
     is_active = models.BooleanField(default=True)
@@ -32,6 +33,7 @@ class user(models.Model):
     scalp_image = models.ImageField(upload_to='scalp_image/',null=True,blank=True)
     is_question_submitted = models.BooleanField(default=False)
     hair_health = models.FloatField(default=0)
+    profile_image = models.ImageField(upload_to='profile/',null=True,blank=True)
     category = models.ForeignKey(category,on_delete=models.CASCADE,null=True,blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -42,6 +44,7 @@ class product(models.Model):
     amount = models.IntegerField(default=0)
     min = models.IntegerField(default=0)
     max = models.IntegerField(default=0)
+    category = models.ForeignKey(category,on_delete=models.CASCADE)
     image = models.ImageField(upload_to='product_image/')
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -49,6 +52,7 @@ class product(models.Model):
     
 class questions(models.Model):
     question = models.TextField()
+    category = models.ForeignKey(category,on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
@@ -65,7 +69,17 @@ class user_questinare(models.Model):
     user =  models.ForeignKey(user,on_delete=models.CASCADE) 
     earned_percent = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)      
+    updated_at = models.DateTimeField(auto_now=True)   
+    
+class diet_plan(models.Model):
+    name = models.CharField(max_length=50)
+    description = models.TextField()
+    min = models.IntegerField(default=0)
+    max = models.IntegerField(default=0)
+    category = models.ForeignKey(category,on_delete=models.CASCADE)
+    diet_doc = models.FileField(upload_to='diet_doc/',null=True,blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)   
     
 class package(models.Model):
     name = models.CharField(max_length=150) 

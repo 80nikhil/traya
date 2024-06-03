@@ -14,4 +14,15 @@ class question_serializer(serializers.ModelSerializer):
 class package_serializer(serializers.ModelSerializer):
     class Meta:
         model = package
-        fields = '__all__'                        
+        fields = '__all__'         
+
+class category_serializer(serializers.ModelSerializer):
+    class Meta:
+        model = category
+        fields = '__all__'      
+        
+class diet_plan_serializer(serializers.ModelSerializer):
+    class Meta:
+        model = diet_plan
+        fields = '__all__'                   
+                       
