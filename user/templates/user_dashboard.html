@@ -57,18 +57,7 @@
       </form>
     </div>
     {% else %} {% if scalp_image %}
-    <h5 class="text-warning font-weight-bold">Your Report</h5>
-    {% for obj in answer_list %}
-    <p>
-      {{obj.question.question}} -
-      <span class="text-success font-weight-bold">{{obj.answer.choice}}</span>
-    </p>
-    {% endfor %}
-    <p class="mt-2">
-      Your hair health is :
-      <span class="text-success font-weight-bold">{{user.hair_health}}</span>
-    </p>
-    <h5 class="mt-5">Recommended Packages List</h5>
+    <h5 class="mt-2">Recommended Packages List</h5>
     <div class="scroll-container d-flex justify-content-center">
       {%for package in package_list%}
       <div class="card mb-3" style="max-width: 35rem;">
@@ -128,6 +117,29 @@
         </div>
       {% endfor %}
     </div>
+    <h5 class="mt-5">Recommended Diet Plan</h5>
+    <div class="scroll-container d-flex justify-content-center">
+      {%for package in diet_list%}
+      <div class="card mb-3" style="max-width: 35rem;">
+        <div class="row g-0">
+          <div class="col-md-4">
+            <img src="https://logos-world.net/wp-content/uploads/2020/10/Free-Logo.png" class="img-fluid rounded-start" alt="...">
+          </div>
+          <div class="col-md-8">
+            <div class="card-body">
+            <h3 class="card-title">{{ package.name }}</h3>
+            <p class="card-text">{{ package.description|safe|truncatechars:50 }}</p>
+              <form action="/user/add-to-cart" method="post">
+                {% csrf_token %}
+                <button class="btn btn-success m-1 text-white w-100">View Details</button>
+              </form>
+          </div>
+        </div>
+      </div>
+    </div>
+      {% endfor %}
+    </div>
+
      {% else %}
     <form
       action="/user/add-scalp-image"

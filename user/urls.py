@@ -22,8 +22,9 @@ urlpatterns = [
     path('dashboard',Dashboard.as_view(),name='dashboard'),
     path('product',Product.as_view(),name='product'),
     path('add-to-cart',Add_to_Cart.as_view(),name='add-to-cart'),
-    path('add-to-cart',Add_to_Cart.as_view(),name='add-to-cart'),
+    path('add-to-order',Add_to_Order.as_view(),name='add-to-order'),
     path('add-scalp-image',Add_Scalp_Image.as_view(),name='add-scalp-image'),
     path('remove-product',Remove_From_Cart.as_view(),name='remove-product'),
+    path('report',Report.as_view(),name='report'),
     path('logout',Logout.as_view(),name='logout'),
 ]

@@ -23,7 +23,7 @@ class Register(View):
             return redirect('/user/dashboard') 
         except KeyError as e:
            category_list = category.objects.all()
-           context = {'category_list':category_list,'cart_count':get_cart_count(request)}
+           context = {'category_list':category_list}
            return render(request,self.template_name,context)  
     
     def post(self,request,*args, **kwargs):
@@ -85,7 +85,9 @@ class Dashboard(TemplateView):
                 list = user_questinare.objects.filter(user=user_obj)
                 product_list = product.objects.filter(min__lte=user_obj.hair_health,max__gte=user_obj.hair_health)
                 package_list = package.objects.filter(min__lte=user_obj.hair_health,max__gte=user_obj.hair_health)
-                context = {'scalp_image':True,'answer_list':list,'user':user_obj,'product_list':product_list,'package_list':package_list}
+                diet_list = diet_plan.objects.filter(min__lte=user_obj.hair_health,max__gte=user_obj.hair_health)
+                context = {'scalp_image':True,'answer_list':list,'user':user_obj,'product_list':product_list,'package_list':package_list,
+                           'diet_list':diet_list,'cart_count':get_cart_count(request)}
             elif  user_obj.is_question_submitted :
                 context = {'scalp_image':False}
             else:    
@@ -150,7 +152,32 @@ class Add_to_Cart(TemplateView):
             return redirect('/user/product')
         
         except KeyError as e:
-           return redirect('/user/')         
+           return redirect('/user/')     
+       
+class Add_to_Order(TemplateView):
+    model_name = order
+    template_name = "order.html"
+    
+    def get(self,request,*args, **kwargs):
+        try:
+            user_id=request.session['user_id']
+            list = self.model_name.objects.filter(user__id=user_id)
+            context = {'list':list,'cart_count':get_cart_count(request)}
+            return render(request,self.template_name,context)
+        except KeyError as e:
+           return redirect('/user/') 
+    
+    def post(self,request,*args, **kwargs):
+        try:
+            user_id=request.session['user_id']
+            cart_obj = self.model_name.objects.create(product=product.objects.get(id=request.POST.get('product')),
+                                                      user=user.objects.get(id=user_id))
+
+            cart_obj.save()
+            return redirect('/user/product')
+        
+        except KeyError as e:
+           return redirect('/user/')             
     
 class Remove_From_Cart(TemplateView):    
      model_name = cart
@@ -178,10 +205,25 @@ class Add_Scalp_Image(TemplateView):
             return redirect('/user/dashboard')
         
         except KeyError as e:
-           return redirect('/user/')         
+           return redirect('/user/') 
+
+class Report(View):
+    model_name = user
+    template_name = "reports.html"
+    
+    def get(self,request,*args, **kwargs):
+        try:
+            user_id=request.session['user_id']
+            user_obj = user.objects.get(id=user_id)
+            questions = user_questinare.objects.filter(user=user_obj)
+            context = {'user':user_obj,'questions':questions,'cart_count':get_cart_count(request)}
+            return render(request,self.template_name,context)
+        except KeyError as e:
+           return redirect('/user/')     
+                       
        
 class Logout(APIView):
+    
     def get(self,request,*args, **kwargs):
         del request.session['user_id']
         return redirect('/user')               
-    

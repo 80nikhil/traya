@@ -1,3 +1,4 @@
+
 {% extends "user_base.html" %} {% block body %}{% load static %}
 <script type="text/javascript" src="{% static 'js/custom_table.js' %}"></script>
 <style>
@@ -13,7 +14,7 @@
     margin-top: 20px;
   }
 
-  .products {
+    .products {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
@@ -40,35 +41,28 @@
       width: 100%;
     }
   }
+  a {
+    text-decoration: none;
+  }
 </style>
 <div class="products">
   {% for product in list %}
   <div class="product">
-    <img src="{{ product.image.url }}" class="img-thumbnail rounded" alt="{{ product.name }}" />
-    <h2>{{ product.name }}</h2>
-    <p>Price: {{ product.amount }}</p>
-    <p>{{ product.description|safe|truncatechars:50 }}..<a class="link">see more</a></p>
+    <img src="{{ product.product.image.url }}" alt="{{ product.product.name }}" />
+    <h2>{{ product.product.name }}</h2>
+    <p>Price: {{ product.product.amount }}</p>
+    <p>{{ product.product.description|safe|truncatechars:50 }}..<a class="link">see more</a></p>
     <div class="d-flex">
-      <form action="/user/add-order" method="post">
+      <button class="btn-success m-3 text-white p-2">Buy Now</button>
+      <form action="/user/remove-product" method="post">
         {% csrf_token %}
         <button
-          class="btn-success m-3 text-white p-2"
+          class="btn-danger m-3 text-white p-2"
           type="submit"
           name="product"
           value="{{product.id}}"
         >
-        Buy Now
-        </button>
-      </form>
-      <form action="/user/add-to-cart" method="post">
-        {% csrf_token %}
-        <button
-          class="btn-warning m-3 text-white p-2"
-          type="submit"
-          name="product"
-          value="{{product.id}}"
-        >
-          Add to cart
+          Remove
         </button>
       </form>
     </div>

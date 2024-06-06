@@ -1,0 +1,71 @@
+{% extends "user_base.html" %} 
+{% block body %}
+<div class="container d-flex justify-content-center align-items-center vh-100 mt-2">
+    <div class="card mb-3" style="max-width: 65rem;">
+        <div class="row g-0">
+            <div class="col-md-4">
+                <img src="https://logos-world.net/wp-content/uploads/2020/10/Free-Logo.png"
+                    class="img-fluid rounded-start" alt="...">
+            </div>
+            <div class="col-md-8">
+                <div class="card-body">
+                    <h3 class="card-title">Fidore Health Report</h3>
+                    <p class="card-text"> package.description|safe|truncatechars:50 </p>
+                </div>
+            </div>
+        </div>
+        <hr class="m-1">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th scope="col ps-2" colspan="2">Basic Details</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>Full Name</td>
+                <td>{{user.name}}</td>
+              </tr>
+              <tr>
+                <td>Contact No.</td>
+                <td>{{user.contact_no}}</td>
+              </tr>
+              <tr>
+                <td>Email</td>
+                <td>{{user.email}}</td>
+              </tr>
+              <tr>
+                <td>Gender</td>
+                <td>{{user.gender}}</td>
+              </tr>
+              <tr>
+                <td>Scalp Image</td>
+                <td><a href="{{user.scalp_image}}" class"a-link">View Image</a></td>
+              </tr>
+              <tr>
+                <td>Hair Health</td>
+                <td>{{user.hair_health}} % </td>
+              </tr>
+            </tbody>
+            <thead>
+                <tr>
+                    <th scope="col ps-2" colspan="2">Hair Details</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for obj in questions %}
+            <tr>
+                <td>{{obj.question.question}}</td>
+                <td>{{obj.answer.choice}} </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+            <thead>
+                <tr>
+                    <td scope="col ps-2" colspan="2" class="align-middle">This Health Report is created by @Fidore Health Care</td>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+{% endblock body %}
