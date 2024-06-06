@@ -52,20 +52,8 @@
     <h2>{{ product.product.name }}</h2>
     <p>Price: {{ product.product.amount }}</p>
     <p>{{ product.product.description|safe|truncatechars:50 }}..<a class="link">see more</a></p>
-    <div class="d-flex">
-      <button class="btn-success m-3 text-white p-2">Buy Now</button>
-      <form action="/user/remove-product" method="post">
-        {% csrf_token %}
-        <button
-          class="btn-danger m-3 text-white p-2"
-          type="submit"
-          name="product"
-          value="{{product.id}}"
-        >
-          Remove
-        </button>
-      </form>
-    </div>
+    <hr>
+    <p class="text-warning"><b>Order Status : {{ product.status }}</b></p>
   </div>
   {% endfor %}
 </div>
