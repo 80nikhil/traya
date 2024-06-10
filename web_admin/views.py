@@ -4,6 +4,13 @@ from rest_framework.views import APIView
 from . serializers import * 
 from . models import *
 
+class web_page(TemplateView):
+    template_name = 'web_page.html'
+    
+    def get(self,request,*args, **kwargs):
+        return render(request,self.template_name)   
+    
+
 class Login(TemplateView):
     template_name = 'login.html'
     model_name = user
@@ -189,3 +196,5 @@ class Logout(APIView):
     def get(self,request,*args, **kwargs):
         del request.session['admin_id']
         return redirect('/web_admin')
+
+        

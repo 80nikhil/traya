@@ -27,4 +27,7 @@ urlpatterns = [
     path('remove-product',Remove_From_Cart.as_view(),name='remove-product'),
     path('report',Report.as_view(),name='report'),
     path('logout',Logout.as_view(),name='logout'),
+    
+    
+    path('take-hair-test',TakeHairTest.as_view(),name='take-hair-test'),
 ]

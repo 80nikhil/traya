@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'web_admin',
     'user',
+    'mathfilters',
 ]
 
 MIDDLEWARE = [

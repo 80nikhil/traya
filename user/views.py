@@ -1,3 +1,4 @@
+from django.db.models import OuterRef, Subquery
 from django.shortcuts import render,redirect
 from django.views.generic.base import TemplateView,View
 from rest_framework.views import APIView
@@ -6,6 +7,8 @@ from . serializers import *
 from  web_admin.models import *
 from . models import * 
 from web_admin.models import *
+from django.db.models import Q
+import decimal
 
 def get_cart_count(request):
     user_id=request.session['user_id']
@@ -172,7 +175,6 @@ class Add_to_Order(TemplateView):
             user_id=request.session['user_id']
             cart_obj = self.model_name.objects.create(product=product.objects.get(id=request.POST.get('product')),
                                                       user=user.objects.get(id=user_id))
-
             cart_obj.save()
             return redirect('/user/product')
         
@@ -202,21 +204,38 @@ class Add_Scalp_Image(TemplateView):
             user_obj = self.model_name.objects.get(id=user_id)
             user_obj.scalp_image = request.FILES.get('image')
             user_obj.save()
-            return redirect('/user/dashboard')
+            return redirect('/user/take-hair-test')
         
         except KeyError as e:
            return redirect('/user/') 
 
 class Report(View):
     model_name = user
-    template_name = "reports.html"
+    template_name = "report_page.html"
     
     def get(self,request,*args, **kwargs):
         try:
             user_id=request.session['user_id']
             user_obj = user.objects.get(id=user_id)
-            questions = user_questinare.objects.filter(user=user_obj)
-            context = {'user':user_obj,'questions':questions,'cart_count':get_cart_count(request)}
+            question_1 = user_questinare.objects.filter(user=user_obj,question__report_priority=1).first()
+            if question_1.answer.choice == 'Stage-6':
+                recovery = 0
+            elif question_1.user.hair_health == 100: 
+                recovery = 100
+            elif question_1.user.hair_health > 75: 
+                recovery = 95
+            elif question_1.user.hair_health > 50: 
+                recovery = 90
+            elif question_1.user.hair_health > 25: 
+                recovery = 85
+            else:
+                recovery = 75
+            package_obj = package.objects.filter(min__lte=user_obj.hair_health,max__gte=user_obj.hair_health).first()
+            package_obj.min = round((package_obj.actual_price - package_obj.price) / (package_obj.actual_price / 100),2)
+            package_items_list = package_items.objects.filter(package=package_obj)  
+            product_list = product.objects.filter(package=package_obj)  
+            context = {'user':user_obj,'question_1':question_1,'recovery':recovery,'cart_count':get_cart_count(request),
+                       'package':package_obj,'package_items_list':package_items_list,'product_list':product_list}
             return render(request,self.template_name,context)
         except KeyError as e:
            return redirect('/user/')     
@@ -226,4 +245,108 @@ class Logout(APIView):
     
     def get(self,request,*args, **kwargs):
         del request.session['user_id']
-        return redirect('/user')               
+        return redirect('/user')   
+    
+    
+class TakeHairTest(APIView):
+    model = questions
+    template_name = "take_hair_test.html"
+
+    def get(self,request,*args, **kwargs):
+        question_obj = self.model.objects.filter(is_subque=False).order_by('id')
+        que_per = 0
+        try: 
+            user_id=request.session['user_id']
+            user_obj = user.objects.get(id=request.session['user_id'])
+            question_obj = question_obj.filter(Q(gender__isnull=True)|Q(gender=user_obj.gender))
+            excluded_que = []
+            subquery = questions.objects.filter(is_subque=True, main_que__id=OuterRef('main_que__id')).order_by('id').values('id')[:1]
+            distinct_questions = questions.objects.filter(id__in=Subquery(subquery))
+            for main_que_obj in distinct_questions:
+                if user_questinare.objects.filter(user__id=user_id,question__main_que=main_que_obj.main_que).count() == self.model.objects.filter(is_subque=True,main_que=main_que_obj.main_que).count():
+                    excluded_que.append(main_que_obj.id) 
+            questionare_list = user_questinare.objects.filter(user__id=user_id,question__is_subque=False).values_list('question__id',flat=True)
+            excluded_que.extend(list(questionare_list))
+            try:
+                que_per = (100/question_obj.count())*user_questinare.objects.filter(user__id=user_id,question__is_subque=False).count()
+            except :
+                pass
+            if len(excluded_que)>0: 
+                question_obj = question_obj.exclude(id__in=excluded_que)
+        except:
+            pass    
+        question_obj = question_obj.first()
+        category_list = category.objects.all().order_by('id')
+        try:        
+            if self.model.objects.filter(is_subque=True,main_que=user_obj.last_update_que).exists():
+                if user_questinare.objects.get(question=user_obj.last_update_que).answer.choice == 'No':
+                    question_obj = question_obj.exclude(id=user_obj.last_update_que.id)
+                elif user_questinare.objects.get(question=user_obj.last_update_que).answer.choice == 'Yes':
+                    user_que = user_questinare.objects.filter(question__main_que=user_obj.last_update_que).values_list('question__id',flat=True)     
+                    new_question_obj = self.model.objects.filter(is_subque=True,main_que=user_obj.last_update_que).exclude(id__in=list(user_que))
+                    if new_question_obj.exists() >0:
+                        question_obj = new_question_obj.first() 
+                    else:
+                        question_obj = question_obj.exclude(id=user_obj.last_update_que.id)    
+        except:
+            pass    
+        if question_obj:
+            for category_obj in category_list:
+                if category_obj == question_obj.category:
+                    category_obj.is_active = 'active'
+                else:
+                    category_obj.is_active = 'inactive'   
+        choices = choice.objects.filter(question=question_obj)    
+        if not question_obj:
+            if user_obj.scalp_image:
+                return redirect('/user/report')
+            else:
+                status = 'scalp'
+        else:
+            status = 'question'                   
+        context={'que_per':round(que_per,2),'question_obj':question_obj,'category_list':category_list,'choices':choices,'status':status}
+        return render(request,self.template_name,context)
+   
+    def post(self,request,*args, **kwargs): 
+        question = self.model.objects.get(id=request.POST.get('question'))
+        if question.name:
+            if question.name == 'contact_no' and question.category.name == 'About You':
+                try: 
+                    user_obj = user.objects.get(contact_no=request.POST.get('choice'))
+                    request.session['user_id'] = user_obj.id  
+                    return redirect('/user/take-hair-test') 
+                except user.DoesNotExist:
+                    user_obj = user(contact_no=request.POST.get('choice'),role='USER',is_active=True)
+                    user_obj.save()
+                    user_obj = user.objects.get(contact_no=request.POST.get('choice'))
+                request.session['user_id'] = user_obj.id     
+            else:
+                user_obj = user.objects.get(id=request.session['user_id'])
+                question_name = question.name 
+                choice_value = request.POST.get('choice') 
+                setattr(user_obj, question_name, choice_value)
+                user_obj.save() 
+            user_questinare_obj = user_questinare(user=user_obj,question=question) 
+            user_questinare_obj.save()
+            if question.is_subque == False:
+             user_obj.last_update_que = question
+            user_obj.save()       
+        else:
+            user_obj = user.objects.get(id=request.session['user_id'])
+            choice_obj= choice.objects.get(id=request.POST.get('choice'))
+            que_per = 100/self.model.objects.filter(Q(gender__isnull=True)|Q(gender=user_obj.gender),is_subque=False,is_scoring_que=True).count()
+            if self.model.objects.filter(is_subque=True,main_que=question):
+                if request.POST.get('choice') == 'No':
+                   hair_health = que_per
+                else:
+                   hair_health = 0    
+            else:
+                   hair_health = decimal.Decimal((que_per/100))*choice_obj.score  
+            user_questinare_obj = user_questinare(user=user_obj,question=question,answer=choice_obj,earned_percent=hair_health) 
+            user_questinare_obj = user_questinare_obj.save()
+            if question.is_subque == False:
+                user_obj.last_update_que = question
+            user_obj.hair_health = decimal.Decimal(user_obj.hair_health) + decimal.Decimal(hair_health)         
+            user_obj.save()
+        return redirect('/user/take-hair-test')   
+                    
