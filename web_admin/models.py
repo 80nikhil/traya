@@ -37,6 +37,7 @@ class questions(models.Model):
     is_scoring_que = models.BooleanField(default=True)
     name = models.CharField(max_length=20,null=True,blank=True)
     report_priority = models.IntegerField(null=True,blank=True)
+    issue_category = models.ForeignKey(issue_category,on_delete=models.CASCADE,null=True,blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -54,6 +55,7 @@ class user(models.Model):
     scalp_image = models.ImageField(upload_to='scalp_image/',null=True,blank=True)
     is_question_submitted = models.BooleanField(default=False)
     hair_health = models.FloatField(default=0)
+    issue_categories = models.ManyToManyField(issue_category,null=True,blank=True)
     last_update_que = models.ForeignKey(questions,on_delete=models.CASCADE,null=True,blank=True)
     profile_image = models.ImageField(upload_to='profile/',null=True,blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -67,7 +69,6 @@ class choice(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)  
 
-    
 class user_questinare(models.Model):
     question = models.ForeignKey(questions,on_delete=models.CASCADE)
     answer = models.ForeignKey(choice,on_delete=models.CASCADE,null=True,blank=True) 
@@ -108,7 +109,8 @@ class package_items(models.Model):
     
 class product(models.Model):
     name = models.CharField(max_length=150)    
-    amount = models.IntegerField(default=0)
+    amount =  models.FloatField(default=0)
+    actual_price =  models.FloatField(default=0)
     package = models.ForeignKey(package,on_delete=models.CASCADE)
     short_desc = models.TextField()
     desc = models.TextField()

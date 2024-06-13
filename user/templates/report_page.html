@@ -89,7 +89,7 @@
   </style>
   <body class="bg-light">
     <div class="form-group bg-dark text-light d-flex justify-content-between p-2">
-      <h5 class="m-1">FIDORE</h5>
+      <a href="/user/report" class="text-light "><h5 class="m-1">FIDORE</h5></a>
       <div>
           <a href="/user/add-to-cart" class="nav-link text-light">
               <div class="position-relative">
@@ -204,7 +204,11 @@
     </div>
   </div>
     <div class="form-group bg-success text-light text-center p-3">
-      <h3 >BUY NOW</h3>
+      <form action='/user/add-to-cart' method='post'>
+        {% csrf_token %}
+      <input type="hidden" name="package" value="{{package.id}}">
+      <button class='btn btn-success' type='submit'><h5>BUY NOW</h5></button>
+      </form>
    </div>
    <h2 class="mt-4 text-dark">{{question_1.user.name}} Doctor Prescribed - ({{product_list.count}} Products ) </h2>
   </div>

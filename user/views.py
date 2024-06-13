@@ -9,6 +9,7 @@ from . models import *
 from web_admin.models import *
 from django.db.models import Q
 import decimal
+from django.db.models import Sum
 
 def get_cart_count(request):
     user_id=request.session['user_id']
@@ -132,14 +133,19 @@ class Product(TemplateView):
         return render(request,self.template_name,context) 
     
 class Add_to_Cart(TemplateView):
-    template_name = 'cart.html'
-    model_name = cart   
+    template_name = 'user_cart.html'
+    model_name = product   
     
     def get(self,request,*args, **kwargs):
         try:
             user_id=request.session['user_id']
-            product_list = self.model_name.objects.filter(user__id=user_id)
-            context = {'list':product_list,'cart_count':get_cart_count(request)}
+            cart_list = cart.objects.filter(user__id=user_id).values_list('product__id',flat=True)
+            product_list = self.model_name.objects.filter(id__in=cart_list)
+            actual_price = product_list.aggregate(TOTAL = Sum('actual_price'))['TOTAL']
+            amount = product_list.aggregate(TOTAL = Sum('amount'))['TOTAL']
+            context = {'product_list':product_list,'cart_count':get_cart_count(request)}
+            context['actual_price'] = actual_price
+            context['amount'] = amount
             return render(request,self.template_name,context) 
         
         except KeyError as e:
@@ -148,11 +154,16 @@ class Add_to_Cart(TemplateView):
     def post(self,request,*args, **kwargs):
         try:
             user_id=request.session['user_id']
-            cart_obj = self.model_name.objects.create(product=product.objects.get(id=request.POST.get('product')),
-                                                      user=user.objects.get(id=user_id))
+            package_obj = package.objects.get(id=request.POST.get('package'))
+            for prod_obj in product.objects.filter(package=package_obj):
+                if cart.objects.filter(product=prod_obj,user__id=user_id).exists():
+                    pass
+                else:
+                    cart_obj = cart.objects.create(product=prod_obj,
+                                                            user=user.objects.get(id=user_id))
 
-            cart_obj.save()
-            return redirect('/user/product')
+                    cart_obj.save()
+            return redirect('/user/add-to-cart')
         
         except KeyError as e:
            return redirect('/user/')     
@@ -346,6 +357,8 @@ class TakeHairTest(APIView):
             user_questinare_obj = user_questinare_obj.save()
             if question.is_subque == False:
                 user_obj.last_update_que = question
+            if question.issue_category:
+                user_obj.issue_categories.add(question.issue_category)    
             user_obj.hair_health = decimal.Decimal(user_obj.hair_health) + decimal.Decimal(hair_health)         
             user_obj.save()
         return redirect('/user/take-hair-test')   
