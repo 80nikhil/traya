@@ -25,9 +25,12 @@ urlpatterns = [
     path('add-to-order',Add_to_Order.as_view(),name='add-to-order'),
     path('add-scalp-image',Add_Scalp_Image.as_view(),name='add-scalp-image'),
     path('remove-product',Remove_From_Cart.as_view(),name='remove-product'),
+    path('diet-plan',DietPlan.as_view(),name='diet-plan'),
     path('report',Report.as_view(),name='report'),
     path('logout',Logout.as_view(),name='logout'),
-    
-    
     path('take-hair-test',TakeHairTest.as_view(),name='take-hair-test'),
+    
+    path('checkout', checkout, name='checkout'),
+    path('payment_success', payment_success, name='payment_success'),
+    path('payment_cancel', payment_cancel, name='payment_cancel'),
 ]

@@ -90,7 +90,10 @@
   <body class="bg-light">
     <div class="form-group bg-dark text-light d-flex justify-content-between p-2">
       <a href="/user/report" class="text-light "><h5 class="m-1">FIDORE</h5></a>
-      <div>
+      <div class="d-flex">
+        <a href="/user/diet-plan" class="nav-link text-light me-2">
+          Diet Plan
+        </a>
           <a href="/user/add-to-cart" class="nav-link text-light">
               <div class="position-relative">
                   <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
@@ -100,6 +103,7 @@
                   Cart
               </div>
           </a>
+          <a href="/user/logout" class="nav-link text-light ms-2">Logout</a>
       </div>
     </div>
     <div class="form-group top-bg text-light p-4">
@@ -136,29 +140,34 @@
           {% elif question_1.answer.choice == 'Stage-2' %}
           {% endif %}
           <div class="container   progress-container m-4 p-2 form-group desc-bg text-dark rounded">
-            <p>Stage 1 male pattern hair loss is marked by minor hair thinning at the crown or front of your head.</p>
-            <p>Hair follicle damage is very mild at this stage and can be easily stopped from progressing further if treatment is started early.</p>
+            <p>{{question_1.answer.description}}</p>
           </div>
           <h5 class="mt-4">Your hair loss root causes</h5>
           <div class="mt-3 container d-flex p-2">
+            {% for category in user.issue_categories.all %}
+            {% if category.name == 'Dandruff'%}
             <div class="form-group text-center">
                 <div class="text-center text-dark" style="display: inline-block; border: 1px solid #ccc; border-radius: 10px; padding: 10px;">
                   <img src="https://dvv8w2q8s3qot.cloudfront.net/App/Home/result/rootCauses/dandruffff.png" alt="Dandruff Image" class="img-fluid" style="width: 40px; height:40px; ">
                   <h5 style="margin: 10px 0 0 0;">Dandruff</h5>
                 </div>
-              </div> 
-              <div class="form-group text-center ms-3">
-                <div class="text-center text-dark" style="display: inline-block; border: 1px solid #ccc; border-radius: 10px; padding: 10px;">
-                  <img src="https://dvv8w2q8s3qot.cloudfront.net/App/Home/result/rootCauses/nutrition.png" alt="Dandruff Image" class="img-fluid" style="width: 40px; height:40px;">
-                  <h5 style="margin: 10px 0 0 0;">Nutrition</h5>
-                </div>
-              </div>          
+              </div>  
+              {% elif category.name == 'Lifestyle'%}          
               <div class="form-group text-center ms-3">
                 <div class="text-center text-dark" style="display: inline-block; border: 1px solid #ccc; border-radius: 10px; padding: 10px;">
                   <img src="https://dvv8w2q8s3qot.cloudfront.net/App/Home/result/rootCauses/lifestyle.png" alt="Dandruff Image" class="img-fluid" style="width: 40px; height:40px;">
                   <h5 style="margin: 10px 0 0 0;">Lifestyle</h5>
                 </div>
               </div>  
+              {% elif category.name == 'Nutrition'%}          
+              <div class="form-group text-center ms-3">
+                <div class="text-center text-dark" style="display: inline-block; border: 1px solid #ccc; border-radius: 10px; padding: 10px;">
+                  <img src="https://dvv8w2q8s3qot.cloudfront.net/App/Home/result/rootCauses/nutrition.png" alt="Dandruff Image" class="img-fluid" style="width: 40px; height:40px;">
+                  <h5 style="margin: 10px 0 0 0;">Nutrition</h5>
+                </div>
+              </div>  
+              {% endif %}
+              {% endfor %}  
           </div>
           <div class="container progress-container m-4 p-3 form-group root-bg text-dark rounded">
             <p class="ms-3">A poor diet can lead to nutrient gaps leaving your hair follicles without the nourishment, causing hair loss</p>

@@ -117,61 +117,30 @@
           <a href="/user/logout" class="nav-link text-light ms-2">Logout</a>
       </div>
     </div>
-    <div>
-        <div class="container">
-            {% for product in product_list %}
-            <div class="container mt-4">
-                <div class="row justify-content-center">
-                    <div class="col-8"> 
-                        <div class="card product d-flex flex-row p-2 text-left" style="width: 100%; margin: 0 auto;">
-                            <img src="{{ product.image.url }}" class="img-fluid" style="width: 200px; height: 200px; object-fit: cover;" alt="{{ obj.name }}" />
-                            <hr class="m-1">
-                            <div class="p-2" style="flex: 1;">
-                                <h5 class="p-0 mt-1">{{ product.name }}</h5>
-                                <h5 class="p-0 mt-1 text-success">₹ {{ product.amount }} /-</h5>
-                                <div class="mt-3  justify-content-end d-flex">
-                                  {% for category in product.categories.all %}
-                                  {% if category.name == 'Dandruff'%}
-                                  <div class="form-group text-center">
-                                      <div class="text-center text-dark" style="display: inline-block; border: 1px solid #ccc; border-radius: 10px; padding: 10px;">
-                                        <img src="https://dvv8w2q8s3qot.cloudfront.net/App/Home/result/rootCauses/dandruffff.png" alt="Dandruff Image" class="img-fluid" style="width: 40px; height:40px; ">
-                                        <h5 style="margin: 10px 0 0 0;">Dandruff</h5>
-                                      </div>
-                                    </div>  
-                                    {% elif category.name == 'Lifestyle'%}          
-                                    <div class="form-group text-center ms-3">
-                                      <div class="text-center text-dark" style="display: inline-block; border: 1px solid #ccc; border-radius: 10px; padding: 10px;">
-                                        <img src="https://dvv8w2q8s3qot.cloudfront.net/App/Home/result/rootCauses/lifestyle.png" alt="Dandruff Image" class="img-fluid" style="width: 40px; height:40px;">
-                                        <h5 style="margin: 10px 0 0 0;">Lifestyle</h5>
-                                      </div>
-                                    </div>  
-                                    {% elif category.name == 'Nutrition'%}          
-                                  <div class="form-group text-center ms-3">
-                                    <div class="text-center text-dark" style="display: inline-block; border: 1px solid #ccc; border-radius: 10px; padding: 10px;">
-                                      <img src="https://dvv8w2q8s3qot.cloudfront.net/App/Home/result/rootCauses/nutrition.png" alt="Dandruff Image" class="img-fluid" style="width: 40px; height:40px;">
-                                      <h5 style="margin: 10px 0 0 0;">Nutrition</h5>
-                                    </div>
-                                  </div> 
-                                    {% endif %}
-                                    {% endfor %}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <hr class="m-2 col-8 bg-success">  
-                </div>
-            </div>   
-            {% endfor %}
+    <div class="form-group top-bg text-light p-4">
+        <div class="container d-flex  progress-container m-4 p-4 form-group bg-light text-dark rounded">
+            <div class="row w-100">
+              <div class="col-12 position-relative">
+                <h5 style="color:#a5c174">{{diet_plan.name}}</h5>
+           <hr class="mt-1">
+           <p>{{diet_plan.description}}</p>
+           <h5 class="mt-2" style="color:#a5c174">Meals Plans</h5>
+           <hr class="mt-1 top-bg">
+           {% for obj in diet_meal_obj %}
+           <div class="card product d-flex flex-row mb-4  text-left" style="width: 100%; margin: 0 auto;">
+            <img src="{{ obj.image.url }}" class="img-fluid" style="width: 200px; height: 200px; object-fit: cover;" alt="{{ product.name }}" />
+            <div  style="flex: 1;" class="form-group ">
+               <div class="card h-100 p-2">
+                   <div class="card-body">
+                       <h5 class="card-title">{{ obj.name }}</h5>
+                       <hr class="mt-1 mb-1">
+                       <p class="card-text">{{ obj.description }}</p>
+                       <!-- Add more fields as needed -->
+                   </div>
+               </div>
+           </div>
         </div>
+       {% endfor %}
     </div>
-    <div class="footer form-group bg-dark text-light justify-content-center">
-      <div class="col-6 d-flex justify-content-between p-2  bg-success rounded">
-        <div class="d-flex">
-          <h3 class="text-decoration-line-through text-danger">₹ {{actual_price}}</h3>
-          <h3 class="ms-2">₹ {{amount}}</h3>
-          </div>          
-          <h3 class="m-1 text-light"><b>⚡ Buy Now</b></h3>
-        </div>
-  </div>  
-</body>
-</html>
+</div>
+</div>

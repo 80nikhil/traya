@@ -11,7 +11,7 @@ class questionsAdmin(admin.ModelAdmin):
 admin.site.register(questions, questionsAdmin)
 class choiceAdmin(admin.ModelAdmin):
     model = choice
-    list_display = ['id','choice','get_question','score']
+    list_display = ['id','choice','get_question','priority','score']
     def get_question(self, obj):
         return obj.question.question
 admin.site.register(choice,choiceAdmin)
@@ -44,5 +44,6 @@ admin.site.register(package_items)
 class issue_categoryAdmin(admin.ModelAdmin):
     model = issue_category
     list_display = ['name']
-admin.site.register(issue_category,issue_categoryAdmin)    
+admin.site.register(issue_category,issue_categoryAdmin)  
+admin.site.register(diet_meal_plan)  
     

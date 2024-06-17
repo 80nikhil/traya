@@ -133,3 +133,12 @@ MEDIA_URL = '/media/'
 
 MEDIA_ROOT  = os.path.join(BASE_DIR, 'media')
 
+
+
+CC_URL = ' https://test.ccavenue.com'
+CC_MERCHANT_ID = '3146555'
+CC_ACCESS_CODE = 'AVIR45LA68AD72RIDAE07'
+CC_WORKING_KEY = ''
+CC_CURRENCY = 'INR'
+CC_LANG = 'EN'
+CC_BILL_CONTRY = 'India'

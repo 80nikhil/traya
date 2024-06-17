@@ -96,7 +96,8 @@ class Dashboard(TemplateView):
                 context = {'scalp_image':False}
             else:    
                 submitted_question=user_questinare.objects.filter(user__id=user_id).values_list('question__id',flat=True)
-                question_list = self.model_name.objects.filter(category=user_obj.category).exclude(id__in=submitted_question).first()
+                # question_list = self.model_name.objects.filter(category=user_obj.category).exclude(id__in=submitted_question).first()
+                question_list = self.model_name.objects.all()
                 choice_list = choice.objects.filter(question=question_list)
                 context = {'list':question_list,'choices':choice_list,'cart_count':get_cart_count(request)}
             return render(request,self.template_name,context)
@@ -256,7 +257,7 @@ class Logout(APIView):
     
     def get(self,request,*args, **kwargs):
         del request.session['user_id']
-        return redirect('/user')   
+        return redirect('/')   
     
     
 class TakeHairTest(APIView):
@@ -290,10 +291,10 @@ class TakeHairTest(APIView):
         category_list = category.objects.all().order_by('id')
         try:        
             if self.model.objects.filter(is_subque=True,main_que=user_obj.last_update_que).exists():
-                if user_questinare.objects.get(question=user_obj.last_update_que).answer.choice == 'No':
+                if user_questinare.objects.get(user=user_obj,question=user_obj.last_update_que).answer.choice == 'No':
                     question_obj = question_obj.exclude(id=user_obj.last_update_que.id)
-                elif user_questinare.objects.get(question=user_obj.last_update_que).answer.choice == 'Yes':
-                    user_que = user_questinare.objects.filter(question__main_que=user_obj.last_update_que).values_list('question__id',flat=True)     
+                elif user_questinare.objects.get(user=user_obj,question=user_obj.last_update_que).answer.choice == 'Yes':
+                    user_que = user_questinare.objects.filter(user=user_obj,question__main_que=user_obj.last_update_que).values_list('question__id',flat=True)     
                     new_question_obj = self.model.objects.filter(is_subque=True,main_que=user_obj.last_update_que).exclude(id__in=list(user_que))
                     if new_question_obj.exists() >0:
                         question_obj = new_question_obj.first() 
@@ -346,8 +347,8 @@ class TakeHairTest(APIView):
             user_obj = user.objects.get(id=request.session['user_id'])
             choice_obj= choice.objects.get(id=request.POST.get('choice'))
             que_per = 100/self.model.objects.filter(Q(gender__isnull=True)|Q(gender=user_obj.gender),is_subque=False,is_scoring_que=True).count()
-            if self.model.objects.filter(is_subque=True,main_que=question):
-                if request.POST.get('choice') == 'No':
+            if self.model.objects.filter(is_subque=True,main_que=question).exists():
+                if choice_obj.priority == False:
                    hair_health = que_per
                 else:
                    hair_health = 0    
@@ -357,9 +358,152 @@ class TakeHairTest(APIView):
             user_questinare_obj = user_questinare_obj.save()
             if question.is_subque == False:
                 user_obj.last_update_que = question
-            if question.issue_category:
+            if question.issue_category and choice_obj.priority == True:
                 user_obj.issue_categories.add(question.issue_category)    
             user_obj.hair_health = decimal.Decimal(user_obj.hair_health) + decimal.Decimal(hair_health)         
             user_obj.save()
         return redirect('/user/take-hair-test')   
-                    
+    
+class DietPlan(View):
+    template_name = "user_diet_plan.html"
+    model_name = diet_plan
+    
+    def get(self,request,*args, **kwargs):
+        try:
+            user_id=request.session['user_id']
+            user_obj = user.objects.get(id=user_id)
+            diet_obj = self.model_name.objects.filter(min__lte=user_obj.hair_health,max__gte=user_obj.hair_health)
+            dic_max = {}
+            for issue in user_obj.issue_categories.all():
+                for obj in diet_obj.filter(categories=issue):
+                    if not obj.id in dic_max:
+                        dic_max[obj.id] = 1
+                    else:
+                        dic_max[obj.id] = dic_max[obj.id] + 1
+            print(dic_max) 
+            max_key = max(dic_max.items(), key=lambda k: k[0])[0]
+            diet_meal_obj = diet_meal_plan.objects.filter(diet_plan__id=max_key)
+            diet_obj = diet_meal_obj.last().diet_plan
+            context = {'diet_plan':diet_obj,'diet_meal_obj':diet_meal_obj,'cart_count':get_cart_count(request)}
+            return render(request,self.template_name,context) 
+        except KeyError as e:
+           return redirect('/')     
+             
+'''--------------------------payment---------------------------'''
+from django.shortcuts import HttpResponse, render
+from django.conf import settings
+from django.views.decorators.csrf import csrf_protect, csrf_exempt
+from .utils import *
+from django.conf import settings
+from django.shortcuts import render
+import base64
+
+def encrypt(data, working_key):
+    data_bytes = data.encode('utf-8')
+    encrypted_data = base64.b64encode(data_bytes)  # Placeholder for actual encryption
+    return encrypted_data.decode('utf-8')
+
+def checkout(request):
+    p_merchant_id = settings.CC_MERCHANT_ID
+    current_site = 'https://fidorehealth.com/'
+    p_order_id = '0001'
+    p_currency = settings.CC_CURRENCY
+    p_amount = '100'
+    p_redirect_url = f"{current_site}/payment_success/"
+    p_cancel_url = f"{current_site}/payment_cancel/"
+    p_language = settings.CC_LANG
+
+    billing_info = {
+        'billing_name': 'Foo Bar',
+        'billing_address': '12/Foo Bar',
+        'billing_city': 'Pune',
+        'billing_state': 'Maharashtra',
+        'billing_zip': '411002',
+        'billing_country': settings.CC_BILL_CONTRY,
+        'billing_tel': '9988776655',
+        'billing_email': 'foobar@domain.com',
+    }
+
+    delivery_info = {
+        'delivery_name': '',
+        'delivery_address': '',
+        'delivery_city': '',
+        'delivery_state': '',
+        'delivery_zip': '',
+        'delivery_country': 'India',
+        'delivery_tel': '',
+    }
+
+    merchant_params = {
+        'merchant_param1': '',
+        'merchant_param2': '',
+        'merchant_param3': '',
+        'merchant_param4': '',
+        'merchant_param5': '',
+        'promo_code': '',
+        'customer_identifier': '',
+    }
+
+    merchant_data = {
+        'merchant_id': p_merchant_id,
+        'order_id': p_order_id,
+        'currency': p_currency,
+        'amount': p_amount,
+        'redirect_url': p_redirect_url,
+        'cancel_url': p_cancel_url,
+        'language': p_language,
+        **billing_info,
+        **delivery_info,
+        **merchant_params,
+    }
+
+    merchant_data_str = '&'.join([f"{key}={value}" for key, value in merchant_data.items()])
+    encrypted_merchant_data = encrypt(merchant_data_str, settings.CC_WORKING_KEY)
+
+    data_dict = {
+        'p_redirect_url': p_redirect_url,
+        'encryption': encrypted_merchant_data,
+        'access_code': settings.CC_ACCESS_CODE,
+        'cc_url': settings.CC_URL,
+        'p_amount': p_amount
+    }
+
+    return render(request, 'payment.html', data_dict)
+
+
+@csrf_exempt
+def payment_success(request):
+
+    """
+    Method to handel cc-ave payment success.
+    :param request:
+    :return:
+    """
+
+    response_data = request.POST
+
+    response_chiper = response_data.get('encResp')
+    payment_list = decrypt(response_chiper, settings.CC_WORKING_KEY)
+
+    # payment success code
+
+    return HttpResponse('DONE')
+
+
+@csrf_exempt
+def payment_cancel(request):
+
+    """
+    Method to handel cc-ave.
+    :param request: data
+    :return: status
+    """
+
+    response_data = request.POST
+
+    response_chiper = response_data.get('encResp')
+    payment_list = decrypt(response_chiper, settings.CC_WORKING_KEY)
+
+    # payment cancel code
+
+    return HttpResponse('Cancel')

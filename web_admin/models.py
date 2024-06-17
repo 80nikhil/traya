@@ -21,6 +21,9 @@ class category(models.Model):
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return self.name 
 
 class issue_category(models.Model):
     name = models.CharField(max_length=100)  
@@ -40,6 +43,9 @@ class questions(models.Model):
     issue_category = models.ForeignKey(issue_category,on_delete=models.CASCADE,null=True,blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return self.question 
 
     
 class user(models.Model):
@@ -66,8 +72,13 @@ class choice(models.Model):
     choice = models.CharField(max_length=250) 
     des_img = models.ImageField(upload_to='choice_desc_img/',null=True,blank=True) 
     score = models.DecimalField(default=0,decimal_places=2,max_digits=6)
+    description = models.TextField(null=True,blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)  
+    priority = models.BooleanField(null=True,blank=True)
+    
+    def __str__(self):
+        return self.choice 
 
 class user_questinare(models.Model):
     question = models.ForeignKey(questions,on_delete=models.CASCADE)
@@ -82,10 +93,18 @@ class diet_plan(models.Model):
     description = models.TextField()
     min = models.IntegerField(default=0)
     max = models.IntegerField(default=0)
-    category = models.ForeignKey(category,on_delete=models.CASCADE)
+    categories = models.ManyToManyField(issue_category, related_name='issues_category') 
     diet_doc = models.FileField(upload_to='diet_doc/',null=True,blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)   
+    updated_at = models.DateTimeField(auto_now=True)  
+    
+class diet_meal_plan(models.Model):
+    name = models.CharField(max_length=250) 
+    description = models.TextField()
+    diet_plan = models.ForeignKey(diet_plan,on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='meal_plan_image/',null=True,blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)     
     
 class package(models.Model):
     name = models.CharField(max_length=150) 
