@@ -291,9 +291,9 @@ class TakeHairTest(APIView):
         category_list = category.objects.all().order_by('id')
         try:        
             if self.model.objects.filter(is_subque=True,main_que=user_obj.last_update_que).exists():
-                if user_questinare.objects.get(user=user_obj,question=user_obj.last_update_que).answer.choice == 'No':
+                if user_questinare.objects.get(user=user_obj,question=user_obj.last_update_que).answer.priority == False:
                     question_obj = question_obj.exclude(id=user_obj.last_update_que.id)
-                elif user_questinare.objects.get(user=user_obj,question=user_obj.last_update_que).answer.choice == 'Yes':
+                elif user_questinare.objects.get(user=user_obj,question=user_obj.last_update_que).answer.priority == True:
                     user_que = user_questinare.objects.filter(user=user_obj,question__main_que=user_obj.last_update_que).values_list('question__id',flat=True)     
                     new_question_obj = self.model.objects.filter(is_subque=True,main_que=user_obj.last_update_que).exclude(id__in=list(user_que))
                     if new_question_obj.exists() >0:
@@ -348,12 +348,12 @@ class TakeHairTest(APIView):
             choice_obj= choice.objects.get(id=request.POST.get('choice'))
             que_per = 100/self.model.objects.filter(Q(gender__isnull=True)|Q(gender=user_obj.gender),is_subque=False,is_scoring_que=True).count()
             if self.model.objects.filter(is_subque=True,main_que=question).exists():
-                if choice_obj.priority == False:
-                   hair_health = que_per
-                else:
-                   hair_health = 0    
+                sub_que_per = self.model.objects.filter(is_subque=True,main_que=question).count()
+                hair_health = que_per/sub_que_per
+                hair_health = hair_health/100
+                hair_health = decimal.Decimal(hair_health)*choice_obj.score 
             else:
-                   hair_health = decimal.Decimal((que_per/100))*choice_obj.score  
+                hair_health = decimal.Decimal((que_per/100))*choice_obj.score  
             user_questinare_obj = user_questinare(user=user_obj,question=question,answer=choice_obj,earned_percent=hair_health) 
             user_questinare_obj = user_questinare_obj.save()
             if question.is_subque == False:
