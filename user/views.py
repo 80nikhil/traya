@@ -127,7 +127,6 @@ class Dashboard(TemplateView):
 class Product(TemplateView):
     template_name = 'product.html'
     model_name = product   
-    
     def get(self,request,*args, **kwargs):
         product_list = self.model_name.objects.all()
         context = {'list':product_list,'cart_count':get_cart_count(request)}
@@ -252,7 +251,14 @@ class Report(View):
         except KeyError as e:
            return redirect('/user/')     
                        
-       
+class AllProducts(APIView):
+    model = product
+    template_name = "all_product.html"
+    def get(self,request,*args, **kwargs):
+        product_list = self.model.objects.all()
+        context = {'product_list':product_list,'cart_count':get_cart_count(request)}
+        return render(request,self.template_name,context)
+               
 class Logout(APIView):
     
     def get(self,request,*args, **kwargs):

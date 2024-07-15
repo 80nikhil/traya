@@ -108,11 +108,36 @@
             <h5 class="m-3">{{question_obj.question}}</h5>
             {% if question_obj.category.name == 'About You'%}
             {% if question_obj.question == 'Gender' %}
-            <select name="choice" class="form-control input-line w-50 mx-auto mt-4">
-              <option selected="true" disabled="disabled">---Select Gender----- </option>
-              <option value="MALE">Male</option>
-              <option value="FEMALE">Female</option>
-            </select>
+            <div class="row bg-secondary-subtle rounded">
+              <div class="col">
+                <div class="row ">
+                  <div class="col-auto p-3">
+                    <div class="form-check d-flex align-items-center">
+                      <input class="form-check-input" type="radio" name="choice" id="gender" value="MALE">
+                      <label class="form-check-label ms-3" for="gender">Male</label>
+                    </div>
+                  </div>
+                  <div class="col-auto p-3">
+                    <div class="form-check ms-3">
+                      <img src="{% static "assets/man.jpg" %}" alt="Dandruff Image" class="img-fluid" style="width: 55px; height: 55px;">
+                    </div>
+                  </div>
+                </div>
+                <div class="row ">
+                  <div class="col-auto p-3">
+                    <div class="form-check d-flex align-items-center">
+                      <input class="form-check-input" type="radio" name="choice" id="gender" value="FEMALE">
+                      <label class="form-check-label ms-3" for="gender">Female</label>
+                    </div>
+                  </div>
+                  <div class="col-auto p-3">
+                    <div class="form-check ms-3">
+                      <img src="{% static "assets/female.jpg" %}" alt="Dandruff Image" class="img-fluid" style="width: 55px; height: 55px;">
+                    </div>
+                  </div>
+                </div>
+           </div>
+          </div>
             {% else %}
             <input type="text" class="form-control input-line w-50 mx-auto mt-4" placeholder="Enter text" name="choice" required>
            {% endif %}
@@ -121,12 +146,21 @@
                 <div class="col">
                     <div class="row">
                         {% for choice in choices %}
+                           <div class="row ">
                             <div class="col p-3">
                                 <div class="form-check">
                                     <input class="form-check-input" type="radio" name="choice" id="choice{{ choice.id }}" value="{{ choice.id }}">
                                     <label class="form-check-label" for="choice{{ choice.id }}">{{ choice.choice }}</label>
                                 </div>
                             </div>
+                            {% if choice.des_img %}
+                            <div class="col-auto p-3">
+                              <div class="form-check ms-3">
+                                <img src="{{choice.des_img.url}}" alt="Dandruff Image" class="img-fluid" style="width: 55px; height: 55px;">
+                              </div>
+                            </div>
+                            {% endif %}
+                        </div>
                             {% if choices.count > 4 %}
                             {% if forloop.counter|divisibleby:2 or forloop.last %}
                                 </div>
