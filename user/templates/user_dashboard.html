@@ -146,7 +146,7 @@
       method="post"
       enctype="multipart/form-data"
     >
-      {% csrf_token %}
+      {% comment %} {% csrf_token %}
       <div class="form-group col">
         <label for="" class="col-sm-2 form-control-label">Scale Image </label>
         <div class="form-group row mt-3">
@@ -159,7 +159,7 @@
               required
             />
           </div>
-        </div>
+        </div> {% endcomment %}
         <button type="submit" class="btn btn-success mt-3">Submit</button>
       </div>
     </form>
